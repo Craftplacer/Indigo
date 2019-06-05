@@ -179,7 +179,7 @@ public class ScratchRuntime {
 		processEdgeTriggeredHats();
 		interp.stepThreads();
 		app.stagePane.commitPenStrokes();
-		
+
 		if (ready==ReadyLabel.COUNTDOWN || ready==ReadyLabel.READY) {
 			app.stagePane.countdown(count);
 		}
@@ -194,7 +194,7 @@ public class ScratchRuntime {
 	private var videoPosition:int;
 	private var videoSeconds:Number;
 	private var videoAlreadyDone:int;
-	
+
 	private var projectSound:Boolean;
 	private var micSound:Boolean;
 	private var showCursor:Boolean;
@@ -203,14 +203,14 @@ public class ScratchRuntime {
 	private var videoWidth:int;
 	private var videoHeight:int;
 	public var ready:int=ReadyLabel.NOT_READY;
-	
+
 	private var micBytes:ByteArray;
 	private var micPosition:int = 0;
 	private var mic:Microphone;
 	private var micReady:Boolean;
-	
+
 	private var timeout:int;
-	
+
 	private function saveFrame():void {
 		saveSound();
 		var t:Number = getTimer()*.001-videoSeconds;
@@ -282,14 +282,14 @@ public class ScratchRuntime {
 				f.copyPixels(circle.bitmapData,circle.bitmapData.rect,new Point(app.stagePane.mouseX-circle.width/2.0,app.stagePane.mouseY-circle.height/2.0));
 			}
 			if (showCursor) {
-				f.draw(cursor,new Matrix(1,0,0,1,app.stagePane.scratchMouseX()+240,-app.stagePane.scratchMouseY()+180));
+				f.draw(cursor,new Matrix(1,0,0,1,app.stagePane.scratchMouseX()+ScratchObj.STAGEW / 2,-app.stagePane.scratchMouseY()+ScratchObj.STAGEH / 2));
 			}
 		}
 		while (videoSounds.length>videoFrames.length) {
 			videoFrames.push(f);
 		}
 	}
-	
+
 	private function saveSound():void {
 		var floats:Array = [];
 		if (micSound && micBytes.length>0) {
@@ -330,17 +330,17 @@ public class ScratchRuntime {
 		videoSounds.push(combinedStream);
 		combinedStream = null;
 	}
-	
-	private function micSampleDataHandler(event:SampleDataEvent):void 
-	{ 
-	    while(event.data.bytesAvailable) 
+
+	private function micSampleDataHandler(event:SampleDataEvent):void
+	{
+	    while(event.data.bytesAvailable)
 	    {
-	        var sample:Number = event.data.readFloat(); 
-	        micBytes.writeFloat(sample);  
+	        var sample:Number = event.data.readFloat();
 	        micBytes.writeFloat(sample);
-	    } 
-	} 
-	
+	        micBytes.writeFloat(sample);
+	    }
+	}
+
 	public function startVideo(editor:RecordingSpecEditor):void {
 		projectSound = editor.soundFlag();
 		micSound = editor.microphoneFlag();
@@ -352,10 +352,10 @@ public class ScratchRuntime {
 		}
 		micReady = true;
 		if (micSound) {
-			mic = Microphone.getMicrophone(); 
+			mic = Microphone.getMicrophone();
 			mic.setSilenceLevel(0);
-			mic.gain = editor.getMicVolume(); 
-			mic.rate = 44; 
+			mic.gain = editor.getMicVolume();
+			mic.rate = 44;
 			micReady=false;
 		}
 		if (fullEditor) {
@@ -376,8 +376,8 @@ public class ScratchRuntime {
 			}
 		}
 		else {
-			videoWidth = 480;
-			videoHeight = 360;
+			videoWidth = ScratchObj.STAGEW;
+			videoHeight = ScratchObj.STAGEH;
 		}
 		ready=ReadyLabel.COUNTDOWN;
 		videoSeconds = getTimer()*.001;
@@ -387,7 +387,7 @@ public class ScratchRuntime {
 		baFlvEncoder.start();
 		waitAndStart();
 	}
-	
+
 	public function exportToVideo():void {
 		var specEditor:RecordingSpecEditor = new RecordingSpecEditor();
 		function startCountdown():void {
@@ -395,7 +395,7 @@ public class ScratchRuntime {
 		}
 		DialogBox.close("Record Project Video",null,specEditor,"Start",app.stage,startCountdown);
 	}
-	
+
 	public function stopVideo():void {
 		if (recording) videoTimer.dispatchEvent(new TimerEvent(TimerEvent.TIMER));
 		else if (ready==ReadyLabel.COUNTDOWN || ReadyLabel.READY) {
@@ -404,7 +404,7 @@ public class ScratchRuntime {
 			app.stagePane.countdown(0);
 		}
 	}
-	
+
 	public function finishVideoExport(event:TimerEvent):void {
 		stopRecording();
 		stopAll();
@@ -413,7 +413,7 @@ public class ScratchRuntime {
 		clearTimeout(timeout);
 		timeout = setTimeout(saveRecording,1);
 	}
-	
+
 	public function waitAndStart():void {
 		if (!micReady && !mic.hasEventListener(StatusEvent.STATUS)) {
 			micBytes = new ByteArray();
@@ -445,7 +445,7 @@ public class ScratchRuntime {
     	videoTimer.addEventListener(TimerEvent.TIMER, finishVideoExport);
     	videoTimer.start();
 	}
-	
+
 	public function stopRecording():void {
 		recording = false;
 		videoTimer.stop();
@@ -479,7 +479,7 @@ public class ScratchRuntime {
 				videoSounds[videoPosition]=null;
 				videoPosition++;
 			}
-			if (app.lp) app.lp.setProgress(Math.min((videoPosition-videoAlreadyDone) / (videoFrames.length-videoAlreadyDone), 1)); 
+			if (app.lp) app.lp.setProgress(Math.min((videoPosition-videoAlreadyDone) / (videoFrames.length-videoAlreadyDone), 1));
 			clearTimeout(timeout);
 			timeout = setTimeout(saveRecording, 1);
 			return;
@@ -512,7 +512,7 @@ public class ScratchRuntime {
 		}
 		DialogBox.close("Video Finished!","To save, click the button below.",null,"Save and Download",app.stage,saveFile,releaseVideo,null,true);
 	}
-	
+
 	private function roundToTens(x:Number):Number {
 		return int((x)*10)/10.;
 	}
@@ -690,6 +690,14 @@ public class ScratchRuntime {
 
 				processExtensionReporter(hat, target, extName, op, finalArgs);
 			}
+		}
+
+		if ('whenCondition' == hat.op && interp.boolarg(hat, 0)) {
+			if (triggeredHats.indexOf(hat) == -1) { // not already trigged
+				// only start the stack if it is not already running
+				if (!interp.isRunning(hat, target)) interp.toggleThread(hat, target);
+			}
+			activeHats.push(hat);
 		}
 	}
 
@@ -949,6 +957,9 @@ public class ScratchRuntime {
 
 	public function keyDown(evt:KeyboardEvent):void {
 		shiftIsDown = evt.shiftKey;
+		keyIsDown[Keyboard.CONTROL] = evt.ctrlKey;
+		keyIsDown[Keyboard.SHIFT] = evt.shiftKey;
+		keyIsDown[Keyboard.ALTERNATE] = evt.altKey;
 		var ch:int = getKeyCodeFromEvent(evt);
 		if (!(evt.target is TextField)) startKeyHats(ch);
 		keyIsDown[ch] = true;
@@ -956,6 +967,9 @@ public class ScratchRuntime {
 
 	public function keyUp(evt:KeyboardEvent):void {
 		shiftIsDown = evt.shiftKey;
+		keyIsDown[Keyboard.CONTROL] = evt.ctrlKey;
+		keyIsDown[Keyboard.SHIFT] = evt.shiftKey;
+		keyIsDown[Keyboard.ALTERNATE] = evt.altKey;
 		var ch:int = getKeyCodeFromEvent(evt);
 		keyIsDown[ch] = false;
 	}
@@ -973,6 +987,9 @@ public class ScratchRuntime {
 				case Keyboard.UP: return SCRATCH_ARROW_UP;
 				case Keyboard.DOWN: return SCRATCH_ARROW_DOWN;
 			}
+			if(event.ctrlKey) return Keyboard.CONTROL;
+			if(event.altKey) return Keyboard.ALTERNATE;
+			if(event.shiftKey) return Keyboard.SHIFT;
 		}
 		return String.fromCharCode(charCode).toLowerCase().charCodeAt(0);
 	}
@@ -984,6 +1001,10 @@ public class ScratchRuntime {
 			case 'up arrow': return SCRATCH_ARROW_UP;
 			case 'down arrow': return SCRATCH_ARROW_DOWN;
 			case 'space': return Keyboard.SPACE;
+			case 'escape': return Keyboard.ESCAPE;
+			case 'control': return Keyboard.CONTROL;
+			case 'alt': return Keyboard.ALTERNATE;
+			case 'shift': return Keyboard.SHIFT;
 		}
 		return keyName.charCodeAt(0);
 	}
@@ -995,6 +1016,10 @@ public class ScratchRuntime {
 			case SCRATCH_ARROW_UP: return 'up arrow';
 			case SCRATCH_ARROW_DOWN: return 'down arrow';
 			case Keyboard.SPACE: return 'space';
+			case Keyboard.ESCAPE: return 'escape';
+			case Keyboard.CONTROL: return 'control';
+			case Keyboard.ALTERNATE: return 'alt';
+			case Keyboard.SHIFT: return 'shift';
 			default: return String.fromCharCode(keyCode);
 		}
 	}

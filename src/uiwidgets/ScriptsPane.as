@@ -366,6 +366,10 @@ return true; // xxx disable this check for now; it was causing confusion at Scra
 	}
 
 	private function dropCompatible(droppedBlock:Block, target:DisplayObject):Boolean {
+		//REMOVE LIMIT
+		if (targetType == 'b') return dropType == 'b';
+		return true;
+		//----------------------------
 		const menusThatAcceptReporters:Array = [
 			'broadcast', 'costume', 'backdrop', 'scene', 'sound',
 			'spriteOnly', 'spriteOrMouse', 'location', 'spriteOrStage', 'touching'];
@@ -380,8 +384,7 @@ return true; // xxx disable this check for now; it was causing confusion at Scra
 			if (Block(target.parent).type == 'h') return false;
 			return menusThatAcceptReporters.indexOf(BlockArg(target).menuName) > -1;
 		}
-		if (targetType == 'b') return dropType == 'b';
-		return true;
+		
 	}
 
 	/* Dropping */

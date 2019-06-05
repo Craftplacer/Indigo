@@ -48,8 +48,8 @@ public class ScratchObj extends Sprite {
 
 	[Embed(source='../assets/pop.wav', mimeType='application/octet-stream')] protected static var Pop:Class;
 
-	public static const STAGEW:int = 480;
-	public static const STAGEH:int = 360;
+	public static var STAGEW:int = 480; //Default: 480 Wide: 640
+	public static var STAGEH:int = 360;
 
 	public var objName:String = 'no name';
 	public var isStage:Boolean = false;

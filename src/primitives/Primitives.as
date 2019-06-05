@@ -32,7 +32,7 @@ package primitives {
 
 public class Primitives {
 
-	private const MaxCloneCount:int = 300;
+	private const MaxCloneCount:int = 10000; //Original: 300
 
 	protected var app:Scratch;
 	protected var interp:Interpreter;
@@ -45,6 +45,7 @@ public class Primitives {
 
 	public function addPrimsTo(primTable:Dictionary):void {
 		// operators
+
 		primTable["+"]				= function(b:*):* { return interp.numarg(b, 0) + interp.numarg(b, 1) };
 		primTable["-"]				= function(b:*):* { return interp.numarg(b, 0) - interp.numarg(b, 1) };
 		primTable["*"]				= function(b:*):* { return interp.numarg(b, 0) * interp.numarg(b, 1) };
@@ -59,6 +60,11 @@ public class Primitives {
 		primTable["abs"]			= function(b:*):* { return Math.abs(interp.numarg(b, 0)) };
 		primTable["sqrt"]			= function(b:*):* { return Math.sqrt(interp.numarg(b, 0)) };
 
+		primTable["parseBoolean"] = primParseBoolean;
+		primTable["booleanValue"]	= function(b:*):* {return interp.boolarg(b,0);};
+
+		primTable["shortIf"]	    = function(b:*):* {return app.interp.arg(b, 0) ? app.interp.arg(b, 1) : app.interp.arg(b, 2); };
+
 		primTable["concatenate:with:"]	= function(b:*):* { return ("" + interp.arg(b, 0) + interp.arg(b, 1)).substr(0, 10240); };
 		primTable["letter:of:"]			= primLetterOf;
 		primTable["stringLength:"]		= function(b:*):* { return String(interp.arg(b, 0)).length };
@@ -71,6 +77,7 @@ public class Primitives {
 		primTable["createCloneOf"]		= primCreateCloneOf;
 		primTable["deleteClone"]		= primDeleteClone;
 		primTable["whenCloned"]			= interp.primNoop;
+		primTable["isClone"]			= primIsClone;
 
 		// testing (for development)
 		primTable["NOOP"]				= interp.primNoop;
@@ -82,7 +89,23 @@ public class Primitives {
 		new MotionAndPenPrims(app, interp).addPrimsTo(primTable);
 		new SoundPrims(app, interp).addPrimsTo(primTable);
 		new VideoMotionPrims(app, interp).addPrimsTo(primTable);
+		new MorePrims(app, interp).addPrimsTo(primTable);
 		addOtherPrims(primTable);
+	}
+
+	protected function primParseBoolean(b:Block):Boolean
+	{
+		//true
+		if (interp.arg(b, 0).toLowerCase() == "true")  return true;
+		if (interp.arg(b, 0).toLowerCase() == "y")  return true;
+		if (interp.arg(b, 0).toLowerCase() == "yes")  return true;
+		if (interp.arg(b, 0) == 1)  return true;
+		//false
+		if (interp.arg(b, 0).toLowerCase() == "false")  return false;
+		if (interp.arg(b, 0).toLowerCase() == "n")  return false;
+		if (interp.arg(b, 0).toLowerCase() == "no")  return false;
+		if (interp.arg(b, 0) == 0)  return false;
+		return false;
 	}
 
 	protected function addOtherPrims(primTable:Dictionary):void {
@@ -194,6 +217,10 @@ public class Primitives {
 			}
 		}
 		app.runtime.cloneCount++;
+	}
+
+	private function primIsClone(b:Block):Boolean {
+		return interp.targetSprite().isClone;
 	}
 
 	private function primDeleteClone(b:Block):void {

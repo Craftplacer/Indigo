@@ -26,8 +26,11 @@ package primitives {
 	import blocks.Block;
 	import interpreter.Interpreter;
 	import flash.utils.Dictionary;
+	import flash.net.FileReference;
+	import flash.net.FileReferenceList;
 	import watchers.ListWatcher;
 	import scratch.ScratchObj;
+import uiwidgets.DialogBox;
 
 public class ListPrims {
 
@@ -40,14 +43,38 @@ public class ListPrims {
 	}
 
 	public function addPrimsTo(primTable:Dictionary):void {
-		primTable[Specs.GET_LIST]		= primContents;
-		primTable['append:toList:']		= primAppend;
-		primTable['deleteLine:ofList:']	= primDelete;
-		primTable['insert:at:ofList:']	= primInsert;
-		primTable['setLine:ofList:to:']	= primReplace;
-		primTable['getLine:ofList:']	= primGetItem;
-		primTable['lineCountOfList:']	= primLength;
-		primTable['list:contains:']		= primContains;
+		primTable[Specs.GET_LIST]			= primContents;
+		primTable['append:toList:']			= primAppend;
+		primTable['deleteLine:ofList:']		= primDelete;
+		primTable['insert:at:ofList:']		= primInsert;
+		primTable['setLine:ofList:to:']		= primReplace;
+		primTable['getLine:ofList:']		= primGetItem;
+		primTable['lineCountOfList:']		= primLength;
+		primTable['list:contains:']			= primContains;
+		primTable['list:findIndex:ofList:']	= primFindIndex;
+		primTable['list:uploadFile:toList:']= primUploadFile;
+	}
+
+	private function primUploadFile(b:Block):void {
+		var list:ListWatcher = listarg(b, 0);
+		if(list != null)
+		{
+			var file:FileReference = Scratch.loadSingleFileNE();
+			if (file != null)
+			{
+				var s:String = file.data.readUTFBytes(file.data.length);
+				list.importLines(ListWatcher.removeTrailingEmptyLines(s.split(/\r\n|[\r\n]/)));
+			}
+			else
+			{
+				DialogBox.notify("Debug", "file was null");
+			}
+		}
+		else
+		{
+			DialogBox.notify("Debug", "list was null");
+		}
+		return;
 	}
 
 	private function primContents(b:Block):String {
@@ -157,6 +184,19 @@ public class ListPrims {
 			if (Primitives.compare(el, item) == 0) return true;
 		}
 		return false;
+	}
+
+	private function primFindIndex(b:Block):Number {
+		var list:ListWatcher = listarg(b, 0);
+		if (!list) return -1;
+		var item:* = interp.arg(b, 1);
+		var count = 1;
+		for each (var el:* in list.contents) {
+			// use Scratch comparison operator (Scratch considers the string '123' equal to the number 123)
+			if (Primitives.compare(el, item) == 0) return count;
+			count = count + 1;
+		}
+		return 0;
 	}
 
 	private function listarg(b:Block, i:int):ListWatcher {

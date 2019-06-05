@@ -150,13 +150,13 @@ public class LibraryPart extends UIPart {
 		if (!app.isMicroworld) {
 			libraryButton.x = 380;
 			if (app.stageIsContracted) libraryButton.x = 138;
-			libraryButton.y = buttonY + 0;
-			paintButton.x = libraryButton.x + libraryButton.width + 3;
-			paintButton.y = buttonY + 1;
+			libraryButton.y = buttonY;
+			paintButton.x = libraryButton.x + libraryButton.width + 4;
+			paintButton.y = buttonY;
 			importButton.x = paintButton.x + paintButton.width + 4;
-			importButton.y = buttonY + 0;
-			photoButton.x = importButton.x + importButton.width + 8;
-			photoButton.y = buttonY + 2;
+			importButton.y = buttonY;
+			photoButton.x = importButton.x + importButton.width + 4;
+			photoButton.y = buttonY;
 
 			stageThumbnail.x = 2;
 			stageThumbnail.y = CSS.titleBarH + 2;
@@ -278,13 +278,13 @@ public class LibraryPart extends UIPart {
 
 		var buttonY:int = 145;
 		backdropLibraryButton.x = 4;
-		backdropLibraryButton.y = buttonY + 3;
-		backdropPaintButton.x = backdropLibraryButton.right() + 4;
-		backdropPaintButton.y = buttonY + 1;
-		backdropImportButton.x = backdropPaintButton.right() + 1;
-		backdropImportButton.y = buttonY + 0;
-		backdropCameraButton.x = backdropImportButton.right() + 5;
-		backdropCameraButton.y = buttonY + 3;
+		backdropLibraryButton.y = buttonY;
+		backdropPaintButton.x = backdropLibraryButton.right() + 2;
+		backdropPaintButton.y = buttonY;
+		backdropImportButton.x = backdropPaintButton.right() + 2;
+		backdropImportButton.y = buttonY;
+		backdropCameraButton.x = backdropImportButton.right() + 2;
+		backdropCameraButton.y = buttonY;
 	}
 
 	private function addSpritesArea():void {

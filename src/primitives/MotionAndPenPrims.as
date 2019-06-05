@@ -57,11 +57,14 @@ public class MotionAndPenPrims {
 		primTable["xpos:"]				= primSetX;
 		primTable["changeYposBy:"]		= primChangeY;
 		primTable["ypos:"]				= primSetY;
+		primTable["changeZposBy:"]		= primChangeZ;
+		primTable["zpos:"]				= primSetZ;
 
 		primTable["bounceOffEdge"]		= primBounceOffEdge;
 
 		primTable["xpos"]				= primXPosition;
 		primTable["ypos"]				= primYPosition;
+		primTable["zpos"]				= primZPosition;
 		primTable["heading"]			= primDirection;
 
 		primTable["clearPenTrails"]		= primClear;
@@ -75,6 +78,7 @@ public class MotionAndPenPrims {
 		primTable["penSize:"]			= primSetPenSize;
 		primTable["changePenSizeBy:"]	= primChangePenSize;
 		primTable["stampCostume"]		= primStamp;
+		primTable["printText:"]			= primPrintText;
 	}
 
 	private function primMove(b:Block):void {
@@ -169,7 +173,7 @@ public class MotionAndPenPrims {
 			return new Point(w.scratchMouseX(), w.scratchMouseY());
 		}
 		else if (arg == "_random_"){
-			return new Point(Math.round((Math.random()*480) - 240), Math.round((Math.random()*360) - 180));
+			return new Point(Math.round((Math.random()*ScratchObj.STAGEW) - ScratchObj.STAGEW / 2), Math.round((Math.random()*ScratchObj.STAGEH) - ScratchObj.STAGEH / 2));
 		}
 		else {
 			var s:ScratchSprite = app.stagePane.spriteNamed(arg);
@@ -199,6 +203,18 @@ public class MotionAndPenPrims {
 		if (s != null) moveSpriteTo(s, s.scratchX, interp.numarg(b, 0));
 	}
 
+	private function primChangeZ(b:Block):void {
+		var s:ScratchSprite = interp.targetSprite();
+		if (s != null) s.parent.setChildIndex(s, s.parent.getChildIndex(s) + interp.numarg(b, 0));
+		if (s.visible) interp.redraw();
+	}
+
+	private function primSetZ(b:Block):void {
+		var s:ScratchSprite = interp.targetSprite();
+		if (s != null) s.parent.setChildIndex(s, interp.numarg(b, 0));
+		if (s.visible) interp.redraw();
+	}
+
 	private function primBounceOffEdge(b:Block):void {
 		var s:ScratchSprite = interp.targetSprite();
 		if (s == null) return;
@@ -215,6 +231,11 @@ public class MotionAndPenPrims {
 	private function primYPosition(b:Block):Number {
 		var s:ScratchSprite = interp.targetSprite();
 		return (s != null) ? snapToInteger(s.scratchY) : 0;
+	}
+
+	private function primZPosition(b:Block):Number {
+		var s:ScratchSprite = interp.targetSprite();
+		return (s != null) ? snapToInteger(s.parent.getChildIndex(s)) : 0;
 	}
 
 	private function primDirection(b:Block):Number {
@@ -247,7 +268,7 @@ public class MotionAndPenPrims {
 		var alpha:Number = (0xFF & (s.penColorCache >> 24)) / 0xFF;
 		if (alpha == 0) alpha = 1;
 		g.beginFill(0xFFFFFF & s.penColorCache, alpha);
-		g.drawCircle(240 + x, 180 - y, s.penWidth / 2);
+		g.drawCircle(ScratchObj.STAGEW / 2 + x, ScratchObj.STAGEH / 2 - y, s.penWidth / 2);
 		g.endFill();
 		app.stagePane.penActivity = true;
 	}
@@ -324,10 +345,15 @@ public class MotionAndPenPrims {
 		var alpha:Number = (0xFF & (s.penColorCache >> 24)) / 0xFF;
 		if (alpha == 0) alpha = 1;
 		g.lineStyle(s.penWidth, 0xFFFFFF & s.penColorCache, alpha);
-		g.moveTo(240 + oldX, 180 - oldY);
-		g.lineTo(240 + newX, 180 - newY);
+		g.moveTo(ScratchObj.STAGEW / 2 + oldX, ScratchObj.STAGEH / 2 - oldY);
+		g.lineTo(ScratchObj.STAGEW / 2 + newX, ScratchObj.STAGEH / 2 - newY);
 //trace('pen line('+oldX+', '+oldY+', '+newX+', '+newY+')');
 		app.stagePane.penActivity = true;
+	}
+
+	private function primPrintText(b:Block):void{
+		var g:Graphics = app.stagePane.newPenStrokes.graphics;
+
 	}
 
 	private function turnAwayFromEdge(s:ScratchSprite):Boolean {

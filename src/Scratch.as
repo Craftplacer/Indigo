@@ -70,7 +70,7 @@ import ui.parts.*;
 import uiwidgets.*;
 
 import util.*;
-
+import Loader.SB2Loader;
 import watchers.ListWatcher;
 
 public class Scratch extends Sprite {
@@ -89,11 +89,11 @@ public class Scratch extends Sprite {
 	public var isArmCPU:Boolean;
 	public var jsEnabled:Boolean = false; // true when the SWF can talk to the webpage
 	public var ignoreResize:Boolean = false; // If true, temporarily ignore resize events.
-	public var isExtensionDevMode:Boolean = false; // If true, run in extension development mode (as on ScratchX)
+	public var isExtensionDevMode:Boolean = true; // If true, run in extension development mode (as on ScratchX)
 	public var isMicroworld:Boolean = false;
 
 	public var presentationScale:Number;
-	
+
 	// Runtime
 	public var runtime:ScratchRuntime;
 	public var interp:Interpreter;
@@ -107,6 +107,7 @@ public class Scratch extends Sprite {
 	public var loadInProgress:Boolean;
 	public var debugOps:Boolean = false;
 	public var debugOpCmd:String = '';
+
 
 	protected var autostart:Boolean;
 	private var viewedObject:ScratchObj;
@@ -127,7 +128,7 @@ public class Scratch extends Sprite {
 	// UI Parts
 	public var libraryPart:LibraryPart;
 	protected var topBarPart:TopBarPart;
-	protected var stagePart:StagePart;
+	public var stagePart:StagePart;
 	private var tabsPart:TabsPart;
 	protected var scriptsPart:ScriptsPart;
 	public var imagesPart:ImagesPart;
@@ -135,14 +136,11 @@ public class Scratch extends Sprite {
 	public const tipsBarClosedWidth:int = 17;
 
 	public var logger:Log = new Log(16);
-
 	public function Scratch() {
-		SVGTool.setStage(stage);
-		loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
-		app = this;
-
-		// This one must finish before most other queries can start, so do it separately
-		determineJSAccess();
+			SVGTool.setStage(stage);
+			loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
+			app = this;
+			determineJSAccess();
 	}
 
 	protected function determineJSAccess():void {
@@ -174,7 +172,7 @@ public class Scratch extends Sprite {
 
 		stage.align = StageAlign.TOP_LEFT;
 		stage.scaleMode = StageScaleMode.NO_SCALE;
-		stage.frameRate = 30;
+		stage.frameRate = 60;
 
 		if (stage.hasOwnProperty('color')) {
 			// Stage doesn't have a color property on Air 2.6, and Linux throws if you try to set it anyway.
@@ -252,7 +250,7 @@ public class Scratch extends Sprite {
 		}
 	}
 
-	private function loadSingleGithubURL(url:String):void {
+	public function loadSingleGithubURL(url:String):void {
 		url = StringUtil.trim(unescape(url));
 
 		function handleComplete(e:Event):void {
@@ -388,6 +386,7 @@ public class Scratch extends Sprite {
 	}
 
 	protected function startInEditMode():Boolean {
+		return true;
 		return isOffline || isExtensionDevMode;
 	}
 
@@ -665,13 +664,11 @@ public class Scratch extends Sprite {
 	}
 
 	private function keyDown(evt:KeyboardEvent):void {
-		// Escape stops drag operations
-		if (!evt.shiftKey && evt.charCode == 27) {
-			gh.escKeyDown();
-		}
-		// Escape exists presentation mode.
-		else if ((evt.charCode == 27) && stagePart.isInPresentationMode()) {
-			setPresentationMode(false);
+		if (evt.shiftKey && evt.charCode == 27) {
+			// Escape exits presentation mode.
+			if (stagePart.isInPresentationMode()) setPresentationMode(false);
+			// Escape stops drag operations
+			else gh.escKeyDown();
 		}
 		// Handle enter key
 //		else if(evt.keyCode == 13 && !stage.focus) {
@@ -897,15 +894,15 @@ public class Scratch extends Sprite {
 
 		updateLayout(w, h);
 	}
-	
+
 	public function updateRecordingTools(t:Number):void {
 		stagePart.updateRecordingTools(t);
 	}
-	
+
 	public function removeRecordingTools():void {
 		stagePart.removeRecordingTools();
 	}
-	
+
 	public function refreshStagePart():void {
 		stagePart.refresh();
 	}
@@ -921,9 +918,9 @@ public class Scratch extends Sprite {
 			// adjust for global scale (from browser zoom)
 
 			if (stageIsContracted) {
-				stagePart.setWidthHeight(240 + extraW, 180 + extraH, 0.5);
+				stagePart.setWidthHeight((ScratchObj.STAGEW / 2) + extraW, (ScratchObj.STAGEH / 2) + extraH, 0.5);
 			} else {
-				stagePart.setWidthHeight(480 + extraW, 360 + extraH, 1);
+				stagePart.setWidthHeight(ScratchObj.STAGEW + extraW, ScratchObj.STAGEH + extraH, 1);
 			}
 			stagePart.x = 5;
 			stagePart.y = isMicroworld ? 5 : topBarPart.bottom() + 5;
@@ -931,13 +928,13 @@ public class Scratch extends Sprite {
 		} else {
 			drawBG();
 			var pad:int = (w > 550) ? 16 : 0; // add padding for full-screen mode
-			var scale:Number = Math.min((w - extraW - pad) / 480, (h - extraH - pad) / 360);
+			var scale:Number = Math.min((w - extraW - pad) / ScratchObj.STAGEW, (h - extraH - pad) / ScratchObj.STAGEH);
 			scale = Math.max(0.01, scale);
-			var scaledW:int = Math.floor((scale * 480) / 4) * 4; // round down to a multiple of 4
-			scale = scaledW / 480;
+			var scaledW:int = Math.floor((scale * ScratchObj.STAGEW) / 4) * 4; // round down to a multiple of 4
+			scale = scaledW / ScratchObj.STAGEW;
 			presentationScale = scale;
-			var playerW:Number = (scale * 480) + extraW;
-			var playerH:Number = (scale * 360) + extraH;
+			var playerW:Number = (scale * ScratchObj.STAGEW) + extraW;
+			var playerH:Number = (scale * ScratchObj.STAGEH) + extraH;
 			stagePart.setWidthHeight(playerW, playerH, scale);
 			stagePart.x = int((w - playerW) / 2);
 			stagePart.y = int((h - playerH) / 2);
@@ -1063,7 +1060,7 @@ public class Scratch extends Sprite {
 
 		m.showOnStage(stage, b.x, topBarPart.bottom() - 1);
 	}
-	
+
 	public function stopVideo(b:*):void {
 		runtime.stopVideo();
 	}
@@ -1422,6 +1419,7 @@ public class Scratch extends Sprite {
 	}
 
 	public function okayToAdd(newAssetBytes:int):Boolean {
+		return true;
 		// Return true if there is room to add an asset of the given size.
 		// Otherwise, return false and display a warning dialog.
 		const assetByteLimit:int = 50 * 1024 * 1024; // 50 megabytes
@@ -1505,7 +1503,7 @@ public class Scratch extends Sprite {
 	private var firstFrameTime:int;
 	private var frameCount:int;
 
-	protected function addFrameRateReadout(x:int, y:int, color:uint = 0):void {
+	public function addFrameRateReadout(x:int, y:int, color:uint = 0):void {
 		frameRateReadout = new TextField();
 		frameRateReadout.autoSize = TextFieldAutoSize.LEFT;
 		frameRateReadout.selectable = false;
@@ -1608,6 +1606,27 @@ public class Scratch extends Sprite {
 			fileList.browse(filter != null ? [filter] : null);
 		} catch (e:*) {
 		}
+	}
+
+	static public function loadSingleFileNE(filter:FileFilter = null):FileReference {
+		var fileList:FileReferenceList = new FileReferenceList();
+		try {
+			// Ignore the exception that happens when you call browse() with the file browser open
+			if (fileList.browse(filter != null ? [filter] : null)) {
+				if (fileList.fileList.length > 0) {
+				var file:FileReference = FileReference(fileList.fileList[0]);
+				file.load();
+				return file;
+				}
+			}
+			DialogBox.notify("File is null", "User didn't select file");
+			return null;
+
+		} catch (e:*) {
+			DialogBox.notify("Got Exception", e.message);
+			return null;
+		}
+		return null;
 	}
 
 	// -----------------------------

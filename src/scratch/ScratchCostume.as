@@ -148,8 +148,10 @@ public class ScratchCostume {
 	}
 
 	public static function scaleForScratch(bm:BitmapData):BitmapData {
-		if ((bm.width <= 480) && (bm.height <= 360)) return bm;
-		var scale:Number = Math.min(480 / bm.width, 360 / bm.height);
+		//Disable resizing
+		return bm;
+		if ((bm.width <= ScratchObj.STAGEW) && (bm.height <= ScratchObj.STAGEH)) return bm;
+		var scale:Number = Math.min(ScratchObj.STAGEW / bm.width, ScratchObj.STAGEH / bm.height);
 		var result:BitmapData = new BitmapData(scale * bm.width, scale * bm.height, true, 0);
 		var m:Matrix = new Matrix();
 		m.scale(scale, scale);
@@ -161,7 +163,7 @@ public class ScratchCostume {
 		var scale:Number = 2 / bitmapResolution;
 		var costumeBM:BitmapData = bitmapForEditor(isScene);
 		var destP:Point = isScene ? new Point(0, 0) :
-				new Point(480 - (scale * rotationCenterX), 360 - (scale * rotationCenterY));
+				new Point(ScratchObj.STAGEW - (scale * rotationCenterX), ScratchObj.STAGEH - (scale * rotationCenterY));
 		bm.copyPixels(costumeBM, costumeBM.rect, destP);
 		var costumeRect:Rectangle = costumeBM.rect;
 		costumeRect.x = destP.x;
@@ -198,16 +200,16 @@ public class ScratchCostume {
 	public static function emptyBackdropSVG():ByteArray {
 		var data:ByteArray = new ByteArray();
 		data.writeUTFBytes(
-				'<svg width="480" height="360"\n' +
+				'<svg width="'+ ScratchObj.STAGEW+'" height="'+ScratchObj.STAGEH+'"\n' +
 				'  xmlns="http://www.w3.org/2000/svg" version="1.1"\n' +
 				'  xmlns:xlink="http://www.w3.org/1999/xlink">\n' +
-				'	<rect x="0" y="0" width="480" height="360" fill="#FFF" scratch-type="backdrop-fill"> </rect>\n' +
+				'	<rect x="0" y="0" width="'+ScratchObj.STAGEW+'" height="'+ScratchObj.STAGEH+'" fill="#FFF" scratch-type="backdrop-fill"> </rect>\n' +
 				'</svg>\n');
 		return data;
 	}
 
 	public static function emptyBitmapCostume(costumeName:String, forBackdrop:Boolean):ScratchCostume {
-		var bm:BitmapData = forBackdrop ? new BitmapData(480, 360, true, 0xFFFFFFFF) : new BitmapData(1, 1, true, 0);
+		var bm:BitmapData = forBackdrop ? new BitmapData(ScratchObj.STAGEW, ScratchObj.STAGEH, true, 0xFFFFFFFF) : new BitmapData(1, 1, true, 0);
 		var result:ScratchCostume = new ScratchCostume(costumeName, bm);
 		return result;
 	}
@@ -516,7 +518,7 @@ public class ScratchCostume {
 
 	public function thumbnail(w:int, h:int, forStage:Boolean):BitmapData {
 		var dispObj:DisplayObject = displayObj();
-		var r:Rectangle = forStage ? new Rectangle(0, 0, 480 * bitmapResolution, 360 * bitmapResolution) :
+		var r:Rectangle = forStage ? new Rectangle(0, 0, ScratchObj.STAGEW * bitmapResolution, ScratchObj.STAGEH * bitmapResolution) :
 				dispObj.getBounds(dispObj);
 		var centerX:Number = r.x + (r.width / 2);
 		var centerY:Number = r.y + (r.height / 2);
@@ -537,8 +539,8 @@ public class ScratchCostume {
 		var w:int = Math.ceil(Math.max(1, dispR.width));
 		var h:int = Math.ceil(Math.max(1, dispR.height));
 		if (forStage) {
-			w = 480 * bitmapResolution;
-			h = 360 * bitmapResolution
+			w = ScratchObj.STAGEW * bitmapResolution;
+			h = ScratchObj.STAGEH * bitmapResolution
 		}
 
 		var scale:Number = 2 / bitmapResolution;

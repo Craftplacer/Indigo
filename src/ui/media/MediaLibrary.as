@@ -114,7 +114,7 @@ public class MediaLibrary extends Sprite {
 	public function open():void {
 		app.closeTips();
 		app.mediaLibrary = this;
-		setWidthHeight(app.stage.stageWidth, app.stage.stageHeight);
+		setWidthHeight(app.stage.width, app.stage.height);
 		app.addChild(this);
 		viewLibrary();
 	}

@@ -26,7 +26,7 @@ package svgeditor {
 	import flash.utils.*;
 
 	import scratch.ScratchCostume;
-
+import scratch.ScratchObj;
 	import svgeditor.*;
 import svgeditor.ColorPicker;
 import svgeditor.objs.*;
@@ -357,7 +357,7 @@ import svgeditor.objs.*;
 			workArea.getContentLayer().addChild(svgText);
 
 			// Wrap the text
-			var maxWidth:Number = 480 - svgText.x;
+			var maxWidth:Number = ScratchObj.STAGEW - svgText.x;
 			var text:String = textEl.text;
 			var firstChar:uint = 0;
 			svgText.text = '';

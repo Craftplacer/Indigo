@@ -99,8 +99,8 @@ public class OldProjectReader {
 				if (entry.length > 23) s.lists = buildLists(entry[23], s);
 				var c:ScratchCostume = s.currentCostume();
 				s.setScratchXY(
-					entry[3][0] + c.rotationCenterX - 240,
-					180 - (entry[3][1] + c.rotationCenterY));
+					entry[3][0] + c.rotationCenterX - ScratchObj.STAGEW / 2,
+					ScratchObj.STAGEH / 2 - (entry[3][1] + c.rotationCenterY));
 			}
 		}
 		for (i = stageContents.length - 1; i >= 0 ; i--) {

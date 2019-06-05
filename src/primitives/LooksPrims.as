@@ -67,7 +67,7 @@ public class LooksPrims {
 
 		primTable['show']					= primShow;
 		primTable['hide']					= primHide;
-//		primTable['hideAll']				= primHideAll;
+		primTable['hideAll']				= primHideAll;
 
 		primTable['comeToFront']			= primGoFront;
 		primTable['goBackByLayers:']		= primGoBack;
@@ -75,11 +75,11 @@ public class LooksPrims {
 		primTable['setVideoState']			= primSetVideoState;
 		primTable['setVideoTransparency']	= primSetVideoTransparency;
 
-//		primTable['scrollAlign']			= primScrollAlign;
-//		primTable['scrollRight']			= primScrollRight;
-//		primTable['scrollUp']				= primScrollUp;
-//		primTable['xScroll']				= function(b:*):* { return app.stagePane.xScroll };
-//		primTable['yScroll']				= function(b:*):* { return app.stagePane.yScroll };
+		primTable['scrollAlign']			= primScrollAlign;
+		primTable['scrollRight']			= primScrollRight;
+		primTable['scrollUp']				= primScrollUp;
+		primTable['xScroll']				= function(b:*):* { return app.stagePane.xScroll };
+		primTable['yScroll']				= function(b:*):* { return app.stagePane.yScroll };
 
 		primTable['setRotationStyle']		= primSetRotationStyle;
 	}

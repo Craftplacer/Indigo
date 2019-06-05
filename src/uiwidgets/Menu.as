@@ -90,12 +90,12 @@ public class Menu extends Sprite {
 		this.x = (x > 0) ? x : stage.mouseX + 5;
 		this.y = (y > 0) ? y : stage.mouseY - 5;
 		// keep menu on screen
-		this.x = Math.max(5, Math.min(this.x, stage.stageWidth - this.width - 8));
-		this.y = Math.max(5, Math.min(this.y, stage.stageHeight - this.height - 8));
+		this.x = Math.max(5, Math.min(this.x, stage.width - this.width - 8));
+		this.y = Math.max(5, Math.min(this.y, stage.height - this.height - 8));
 		// if under mouse, try to move right a bit so menu stays up
 		if ((this.x < stage.mouseX) && (this.y < stage.mouseY)) {
 			var newX:int = stage.mouseX + 6;
-			if (newX < (stage.stageWidth - this.width)) this.x = newX;
+			if (newX < (stage.width - this.width)) this.x = newX;
 		}
 		stage.addChild(this);
 		addEventListener(Event.ENTER_FRAME, step);
@@ -147,7 +147,7 @@ public class Menu extends Sprite {
 			nextY += item.height;
 		}
 		// compute max height
-		maxHeight = Math.min(500, stage.stageHeight - 50);
+		maxHeight = Math.min(500, stage.height - 50);
 		// compute max scrollIndex
 		var totalH:int;
 		for (maxScrollIndex = allItems.length - 1; maxScrollIndex > 0; maxScrollIndex--) {
@@ -168,7 +168,7 @@ public class Menu extends Sprite {
 	private function makeArrow(up:Boolean):Shape {
 		var arrow:Shape = new Shape();
 		var g:Graphics = arrow.graphics;
-		g.beginFill(0xFFFFFF);
+		g.beginFill(0x424242);
 		if (up) {
 			g.moveTo(0, 5);
 			g.lineTo(5, 0);

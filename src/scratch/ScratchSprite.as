@@ -180,14 +180,14 @@ public class ScratchSprite extends ScratchObj {
 	public function setScratchXY(newX:Number, newY:Number):void {
 		scratchX = isFinite(newX) ? newX : newX > 0 ? 1e6 : -1e6;
 		scratchY = isFinite(newY) ? newY : newY > 0 ? 1e6 : -1e6;
-		x = 240 + Math.round(scratchX);
-		y = 180 - Math.round(scratchY);
+		x = ScratchObj.STAGEW / 2 + Math.round(scratchX);
+		y = ScratchObj.STAGEH / 2 - Math.round(scratchY);
 		updateBubble();
 	}
 
-	static private var stageRect:Rectangle = new Rectangle(0, 0, 480, 360);
+	static private var stageRect:Rectangle = new Rectangle(0, 0, ScratchObj.STAGEW, ScratchObj.STAGEH);
 	static private var emptyRect:Rectangle = new Rectangle(0, 0, 0, 0);
-	static private var edgeBox:Rectangle = new Rectangle(0, 0, 480, 360);
+	static private var edgeBox:Rectangle = new Rectangle(0, 0, ScratchObj.STAGEW, ScratchObj.STAGEH);
 	public function keepOnStage():void {
 		var myBox:Rectangle;
 		if(width == 0 && height == 0) {
@@ -209,8 +209,8 @@ public class ScratchSprite extends ScratchObj {
 		var inset:int = Math.min(18, Math.min(myBox.width, myBox.height) / 2);
 		edgeBox.x = edgeBox.y = inset;
 		inset += inset;
-		edgeBox.width = 480 - inset;
-		edgeBox.height = 360 - inset;
+		edgeBox.width = ScratchObj.STAGEW - inset;
+		edgeBox.height = ScratchObj.STAGEH - inset;
 		if (myBox.intersects(edgeBox)) return; // sprite is sufficiently on stage
 		if (myBox.right < edgeBox.left)
 			scratchX = Math.ceil(scratchX + (edgeBox.left - myBox.right));
@@ -254,7 +254,7 @@ public class ScratchSprite extends ScratchObj {
 		var origW:int = img.width;
 		var origH:int = img.height;
 		var minScale:Number = Math.min(1, Math.max(5 / origW, 5 / origH));
-		var maxScale:Number = Math.min((1.5 * 480) / origW, (1.5 * 360) / origH);
+		var maxScale:Number = Math.min((1.5 * ScratchObj.STAGEW) / origW, (1.5 * ScratchObj.STAGEH) / origH);
 		scaleX = scaleY = Math.max(minScale, Math.min(percent / 100.0, maxScale));
 		clearCachedBitmap();
 		updateBubble();
@@ -380,20 +380,7 @@ public class ScratchSprite extends ScratchObj {
 				var bm:BitmapData = Scratch.app.render3D.getRenderedChild(this, b.width * scaleX, b.height * scaleY);
 				filterPack.setFilter('ghost', oldGhost);
 				updateEffectsFor3D();
-//	    		if(objName == 'Tank 2 down bumper ') {
-//		    		if(!testSpr.parent) {
-//			    		testBM.filters = [new GlowFilter(0xFF00FF, 0.8)];
-//				    	testBM.y = 360; testBM.x = 15;
-//					    testSpr.addChild(testBM);
-//  					testBM.scaleX = testBM.scaleY = 4;
-//	    				testSpr.mouseChildren = testSpr.mouseEnabled = false;
-//		    			stage.addChild(testSpr);
-//			    	}
-//				    testSpr.graphics.clear();
-//  				testSpr.graphics.lineStyle(1);
-//	    			testSpr.graphics.drawRect(testBM.x, testBM.y, bm.width * testBM.scaleX, bm.height * testBM.scaleY);
-//		    		testBM.bitmapData = bm;
-//			    }
+				//Commented code removed (doesn't has a purpose) - Craftplacer
 
 				if (rotation != 0) {
 					m = new Matrix();
@@ -654,6 +641,8 @@ public class ScratchSprite extends ScratchObj {
 		json.writeKeyValue('scratchX', scratchX);
 		json.writeKeyValue('scratchY', scratchY);
 		json.writeKeyValue('scale', scaleX);
+		json.writeKeyValue('scaleX', scaleX);
+		json.writeKeyValue('scaleY', scaleY);
 		json.writeKeyValue('direction', direction);
 		json.writeKeyValue('rotationStyle', rotationStyle);
 		json.writeKeyValue('isDraggable', isDraggable);
@@ -666,7 +655,9 @@ public class ScratchSprite extends ScratchObj {
 		super.readJSON(jsonObj);
 		scratchX = jsonObj.scratchX;
 		scratchY = jsonObj.scratchY;
-		scaleX = scaleY = jsonObj.scale;
+		scaleX = scaleY = jsonObj.scaleX;
+		scaleX = jsonObj.scaleX;
+		scaleY = jsonObj.scaleY;
 		direction = jsonObj.direction;
 		rotationStyle = jsonObj.rotationStyle;
 		isDraggable = jsonObj.isDraggable;

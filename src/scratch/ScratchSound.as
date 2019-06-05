@@ -111,21 +111,28 @@ public class ScratchSound {
 	}
 
 	private function reduceSizeIfNeeded(channels:int):void {
-		// Convert stereo to mono, downsample if rate > 32000, or both.
-		// Compress if data is over threshold and not already compressed.
-		const compressionThreshold:int = 30 * 44100; // about 30 seconds
-		if (rate > 32000 || channels == 2 || format == 'float') {
-			var newRate:int = (rate > 32000) ? rate / 2 : rate;
-			var samples:Vector.<int> = WAVFile.extractSamples(soundData);
-			if (rate > 32000 || channels == 2) {
-				samples = (channels == 2) ? stereoToMono(samples, (newRate < rate)) : downsample(samples);
+		var samples = WAVFile.extractSamples(soundData);
+		//if (false)
+		//{
+			// Convert stereo to mono, downsample if rate > 32000, or both.
+			// Compress if data is over threshold and not already compressed.
+			const compressionThreshold:int = 30 * 44100; // about 30 seconds
+			if (rate > 32000 || channels == 2 || format == 'float') {
+				var newRate:int = (rate > 32000) ? rate / 2 : rate;
+				if (rate > 32000 || channels == 2) {
+					samples = (channels == 2) ? stereoToMono(samples, (newRate < rate)) : downsample(samples);
+				}
+				setSamples(samples, newRate, true);
 			}
-			setSamples(samples, newRate, true);
-		}
-		else if ((soundData.length > compressionThreshold) && ('' == format)) {
-			// Compress large, uncompressed sounds
-			setSamples(WAVFile.extractSamples(soundData), rate, true);
-		}
+			else if ((soundData.length > compressionThreshold) && ('' == format)) {
+				// Compress large, uncompressed sounds
+				setSamples(samples, rate, true);
+			}
+		//}
+		//else
+		//{
+		//		setSamples(samples, rate, false);
+		//}
 	}
 
 	private static function stereoToMono(stereo:Vector.<int>, downsample:Boolean):Vector.<int> {

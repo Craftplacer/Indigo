@@ -99,6 +99,7 @@ public class BlockMenus implements DragClient {
 		if (menuName == 'timeAndDate') menuHandler.timeAndDateMenu(evt);
 		if (menuName == 'triggerSensor') menuHandler.triggerSensorMenu(evt);
 		if (menuName == 'var') menuHandler.varMenu(evt);
+		if (menuName == 'booleanValue') menuHandler.booleanValueMenu(evt);
 		if (menuName == 'videoMotionType') menuHandler.videoMotionTypeMenu(evt);
 		if (menuName == 'videoState') menuHandler.videoStateMenu(evt);
 	}
@@ -311,7 +312,10 @@ public class BlockMenus implements DragClient {
 
 	private function keyMenu(evt:MouseEvent):void {
 		var ch:int;
-		var namedKeys:Array = ['space', 'up arrow', 'down arrow', 'right arrow', 'left arrow', 'any'];
+		var namedKeys:Array = ['space', 
+		'up arrow', 'down arrow', 'right arrow', 'left arrow', //Arrow Keys
+		'any', 'escape', //Special Keys
+		'control', 'alt', 'shift']; //Modifiers
 		var m:Menu = new Menu(setBlockArg, 'key');
 		for each (var s:String in namedKeys) m.addItem(s);
 		for (ch = 97; ch < 123; ch++) m.addItem(String.fromCharCode(ch)); // a-z
@@ -762,7 +766,7 @@ public class BlockMenus implements DragClient {
 		var g:Graphics = colorPickerSprite.graphics;
 		g.clear();
 		g.beginFill(0, 0);
-		g.drawRect(0, 0, app.stage.stageWidth, app.stage.stageHeight);
+		g.drawRect(0, 0, app.stage.width, app.stage.height);
 	}
 
 	private var pickingColor:Boolean = false;
@@ -847,6 +851,13 @@ public class BlockMenus implements DragClient {
 			}
 			m.addItem('clear senders/receivers');
 		}
+		showMenu(m);
+	}
+
+	private function booleanValueMenu(evt:MouseEvent):void {
+		var m:Menu = new Menu(setBlockArg, 'booleanValue');
+		m.addItem(Translator.map('true'), true);
+		m.addItem(Translator.map('false'), false);
 		showMenu(m);
 	}
 

@@ -91,7 +91,6 @@ public class Block extends Sprite {
 	public var nextBlock:Block;
 	public var subStack1:Block;
 	public var subStack2:Block;
-
 	public var base:BlockShape;
 
 	private var suppressLayout:Boolean; // used to avoid extra layouts during block initialization
@@ -174,9 +173,18 @@ public class Block extends Sprite {
 		} else if (type == "p") {
 			base = new BlockShape(BlockShape.ProcHatShape, color);
 			isHat = true;
+		} else if (type == "x") {
+			base = new BlockShape(BlockShape.RectShape, color);
+			isReporter = true;
 		} else {
 			base = new BlockShape(BlockShape.RectShape, color);
 		}
+		var font:String = Resources.chooseFont([
+			'Lucida Grande', 'Verdana', 'Arial', 'DejaVu Sans']);
+		blockLabelFormat = new TextFormat(blockLabelFormat.font, 
+										  blockLabelFormat.size, 
+										  /*Color.getReadableColor(color)*/0xFFFFFF,
+										  blockLabelFormat.bold);
 		addChildAt(base, 0);
 		setSpec(this.spec, defaultArgs);
 
@@ -274,6 +282,7 @@ public class Block extends Sprite {
 		var font:String = Resources.chooseFont([
 			'Lucida Grande', 'Verdana', 'Arial', 'DejaVu Sans']);
 		blockLabelFormat = new TextFormat(font, labelSize, 0xFFFFFF, boldFlag);
+
 		argTextFormat = new TextFormat(font, argSize, 0x505050, false);
 		Block.vOffset = vOffset;
 	}
@@ -489,7 +498,7 @@ public class Block extends Sprite {
 		for (i = 0; i < labelsAndArgs.length; i++) {
 			item = labelsAndArgs[i];
 			// Next line moves the argument of if and if-else blocks right slightly:
-			if ((i == 1) && !(argTypes[i] == 'label')) x = Math.max(x, 30);
+			if (!isReporter && i == 1 && !(argTypes[i] == 'label')) x = Math.max(x, 30);
 			item.x = x;
 			maxH = Math.max(maxH, item.height);
 			x += item.width + 2;
@@ -503,8 +512,8 @@ public class Block extends Sprite {
 			if ((item is BlockArg) && (!BlockArg(item).numberType)) item.y += 1;
 		}
 
-		if ([' ', '', 'o'].indexOf(type) >= 0) x = Math.max(x, minCommandWidth); // minimum width for command blocks
-		if (['c', 'cf', 'e'].indexOf(type) >= 0) x = Math.max(x, minLoopWidth); // minimum width for C and E blocks
+		if ([' ', '', 'o', 'o '].indexOf(type) >= 0) x = Math.max(x, minCommandWidth); // minimum width for command blocks
+		if (['c', 'cf', 'e', 'oc'].indexOf(type) >= 0) x = Math.max(x, minLoopWidth); // minimum width for C and E blocks
 		if (['h'].indexOf(type) >= 0) x = Math.max(x, minHatWidth); // minimum width for hat blocks
 		if (elseLabel) x = Math.max(x, indentLeft + elseLabel.width + 2);
 
@@ -794,12 +803,13 @@ public class Block extends Sprite {
 		//	a token consisting of a single % or @ character is also a label
 		if (s.length >= 2 && s.charAt(0) == "%") { // argument spec
 			var argSpec:String = s.charAt(1);
-			if (argSpec == "b") return new BlockArg("b", c);
+			if (argSpec == "b") return new BlockArg("b", c, true);
 			if (argSpec == "c") return new BlockArg("c", c);
 			if (argSpec == "d") return new BlockArg("d", c, true, s.slice(3));
-			if (argSpec == "m") return new BlockArg("m", c, false, s.slice(3));
+			if (argSpec == "m") return new BlockArg("m", c, true, s.slice(3));
 			if (argSpec == "n") return new BlockArg("n", c, true);
 			if (argSpec == "s") return new BlockArg("s", c, true);
+			if (argSpec == "x") return new BlockArg("x", c, false);
 		} else if (s.length >= 2 && s.charAt(0) == "@") { // icon spec
 			var icon:* = Specs.IconNamed(s.slice(1));
 			return (icon) ? icon : makeLabel(s);

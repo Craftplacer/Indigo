@@ -71,6 +71,9 @@ public class ScratchStage extends ScratchObj {
 	private var videoAlpha:Number = 0.5;
 	private var flipVideo:Boolean = true;
 
+	// children
+	private var whiteBG:Shape;
+
 	public function ScratchStage() {
 		objName = 'Stage';
 		isStage = true;
@@ -87,11 +90,14 @@ public class ScratchStage extends ScratchObj {
 		initMedia();
 		showCostume(0);
 	}
-
+	public function resetPenLayer():void {
+		removeChild(penLayer);
+		addPenLayer();
+	}
 	public function setTempo(bpm:Number):void {
 		tempoBPM = Math.max(20, Math.min(bpm, 500));
 	}
-	
+
 	public function countdown(number:int=-1):void {
 		if (overlay) {
 			removeChild(overlay);
@@ -126,7 +132,7 @@ public class ScratchStage extends ScratchObj {
 		arrowText.x = 28;
 		arrowText.y = 328;
 	}
-	
+
 	private function makeLabel(s:String, fontSize:int):TextField {
 		var tf:TextField = new TextField();
 		tf.selectable = false;
@@ -198,13 +204,13 @@ public class ScratchStage extends ScratchObj {
 	}
 
 	private function addWhiteBG():void {
-		bg = new Shape();
-		bg.graphics.beginFill(0xFFFFFF);
-		bg.graphics.drawRect(0, 0, STAGEW, STAGEH);
-		addChild(bg);
+		whiteBG = new Shape();
+		whiteBG.graphics.beginFill(0xFFFFFF);
+		whiteBG.graphics.drawRect(0, 0, STAGEW, STAGEH);
+		addChild(whiteBG);
 	}
 
-	private function addPenLayer():void {
+	public function addPenLayer():void {
 		newPenStrokes = new Shape();
 		var bm:BitmapData = new BitmapData(STAGEW, STAGEH, true, 0);
 		penLayer = new Bitmap(bm);
@@ -214,8 +220,8 @@ public class ScratchStage extends ScratchObj {
 	public function baseW():Number { return bg.width }
 	public function baseH():Number { return bg.height }
 
-	public function scratchMouseX():int { return Math.max(-240, Math.min(mouseX - (STAGEW / 2), 240)) }
-	public function scratchMouseY():int { return -Math.max(-180, Math.min(mouseY - (STAGEH / 2), 180)) }
+	public function scratchMouseX():int { return Math.max(-(STAGEW / 2), Math.min(mouseX - (STAGEW / 2), STAGEW / 2)) }
+	public function scratchMouseY():int { return -Math.max(-(STAGEH / 2), Math.min(mouseY - (STAGEH / 2), STAGEH / 2)) }
 
 	public override function allObjects():Array {
 		// Return an array of all sprites in this project plus the stage.
@@ -278,7 +284,7 @@ public class ScratchStage extends ScratchObj {
 		m.addItem('save picture of stage', saveScreenshot);
 		return m;
 	}
-	
+
 	public function saveScreenData():BitmapData {
 		var bm:BitmapData = new BitmapData(STAGEW,STAGEH, false);
 		if (videoImage) videoImage.visible = false;
@@ -306,7 +312,7 @@ public class ScratchStage extends ScratchObj {
 		if (videoImage) videoImage.visible = true;
 		return bm;
 	}
-	
+
 	private function saveScreenshot():void {
 		var bitmapData:BitmapData = new BitmapData(STAGEW, STAGEH, true, 0);
 		bitmapData.draw(this);
@@ -537,10 +543,10 @@ public class ScratchStage extends ScratchObj {
 			// Set up the camera only the first time it is used.
 			camera = Camera.getCamera();
 			if (!camera) return; // no camera available or access denied
-			camera.setMode(640, 480, 30);
+			camera.setMode(640, 480, 60);
 		}
 		if (video == null) {
-			video = new Video(480, 360);
+			video = new Video(ScratchObj.STAGEW, ScratchObj.STAGEH);
 			video.attachCamera(camera);
 			videoImage = new Bitmap(new BitmapData(video.width, video.height, false));
 			videoImage.alpha = videoAlpha;
@@ -816,9 +822,9 @@ public class ScratchStage extends ScratchObj {
 			addChild(obj);
 			if (obj is ScratchSprite) {
 				(obj as ScratchSprite).updateCostume();
-				obj.setScratchXY(p.x - 240, 180 - p.y);
+				obj.setScratchXY(p.x - ScratchObj.STAGEW / 2, ScratchObj.STAGEH / 280 - p.y);
 				Scratch.app.selectSprite(obj);
-				obj.setScratchXY(p.x - 240, 180 - p.y); // needed because selectSprite() moves sprite back if costumes tab is open
+				obj.setScratchXY(p.x - ScratchObj.STAGEW / 2, ScratchObj.STAGEH / 2 - p.y); // needed because selectSprite() moves sprite back if costumes tab is open
 				(obj as ScratchObj).applyFilters();
 			}
 			if (!(obj is ScratchSprite) || Scratch.app.editMode) Scratch.app.setSaveNeeded();

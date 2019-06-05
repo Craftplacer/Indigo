@@ -89,8 +89,10 @@ public class ExtensionDevManager extends ExtensionManager {
 			if (evt.shiftKey) {
 				showShiftMenu(evt);
 			} else {
-				Scratch.app.setModalOverlay(true);
-				Scratch.app.externalCall('JSshowExtensionDialog');
+				//DialogBox.
+				//Scratch.app.loadSingleGithubUrl()
+				//Scratch.app.setModalOverlay(true);
+				//Scratch.app.externalCall('JSshowExtensionDialog');
 			}
 		});
 

@@ -25,7 +25,7 @@
 package blocks {
 	import flash.display.*;
 	import flash.filters.*;
-
+	import util.Color;
 public class BlockShape extends Shape {
 
 	// Shapes
@@ -73,7 +73,7 @@ public class BlockShape extends Shape {
 		this.color = color;
 		this.shape = shape;
 		setShape(shape);
-		filters = blockShapeFilters();
+		//filters = blockShapeFilters();
 	}
 
 	public function setWidthAndTopHeight(newW:int, newTopH:int, doRedraw:Boolean = false):void {
@@ -145,6 +145,9 @@ public class BlockShape extends Shape {
 		if (!redrawNeeded) return;
 		var g:Graphics = this.graphics;
 		g.clear();
+		g.beginFill(Color.scaleBrightness(color,-1));
+		drawFunction(g);
+		g.endFill();
 		g.beginFill(color);
 		drawFunction(g);
 		g.endFill();

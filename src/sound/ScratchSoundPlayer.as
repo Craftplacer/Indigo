@@ -32,6 +32,7 @@ package sound {
 import flash.utils.ByteArray;
 
 import scratch.ScratchSound;
+import uiwidgets.DialogBox;
 
 public class ScratchSoundPlayer {
 
@@ -42,6 +43,61 @@ public class ScratchSoundPlayer {
 		var oldSounds:Array = activeSounds;
 		activeSounds = [];
 		for each (var player:ScratchSoundPlayer in oldSounds) player.stopPlaying();
+	}
+	static public function stopSound(name:String):void {
+		// Stop playing currently playing sound
+		var oldSounds:Array = activeSounds;
+		
+		for each (var player:ScratchSoundPlayer in oldSounds) 
+		{
+			if(player.scratchSound != null)
+			{
+				if(player.scratchSound.soundName == name) 
+				{
+					activeSounds.removeAt(activeSounds.indexOf(player));
+					player.stopPlaying();
+				}	
+			}
+		}
+	}
+	static public function pauseSound(name:String):void {
+		// Pause playing currently playing sound
+		var oldSounds:Array = activeSounds;
+		for each (var player:ScratchSoundPlayer in oldSounds) 
+		{
+			if(player.scratchSound != null)
+			{
+				if(player.scratchSound.soundName == name) 
+					player.pausePlaying();
+			}
+		}
+	}
+	static public function resumeSound(name:String):void {
+		// Resume playing currently playing sound
+		var oldSounds:Array = activeSounds;
+		for each (var player:ScratchSoundPlayer in oldSounds) 
+		{
+			if(player.scratchSound != null)
+			{
+				if(player.scratchSound.soundName == name) 
+					player.resumePlaying();
+			}
+		}
+	}
+
+	static public function getPausePosition(name:String):int {
+		// Resume playing currently playing sound
+		var oldSounds:Array = activeSounds;
+		for each (var player:ScratchSoundPlayer in oldSounds) 
+		{
+			if(player.scratchSound != null)
+			{
+				if(player.scratchSound.soundName == name) 
+					return player.pausePosition;
+			}
+			else{ return -2;}
+		}
+		return -1;
 	}
 
 	// sound being played
@@ -60,6 +116,8 @@ public class ScratchSoundPlayer {
 	protected var bytePosition:int;  // use our own position to allow sound data to be shared
 	public var soundChannel:SoundChannel;
 	private var lastBufferTime:uint;
+	public var pausePosition:int;
+	public function position():int { return soundChannel.position; }
 
 	// volume support
 	public var client:*;
@@ -122,10 +180,29 @@ public class ScratchSoundPlayer {
 		activeSounds.push(this);
 		bytePosition = startOffset;
 		nextSample = getSample();
-
+		
 		var flashSnd:Sound = new Sound();
 		flashSnd.addEventListener(SampleDataEvent.SAMPLE_DATA, writeSampleData);
 		soundChannel = flashSnd.play();
+		if (soundChannel) {
+			if (doneFunction != null) soundChannel.addEventListener(Event.SOUND_COMPLETE, doneFunction);
+		} else {
+			// User has no sound card or too many sounds already playing.
+			stopPlaying();
+			if (doneFunction != null) doneFunction();
+		}
+	}
+
+	public function pausePlaying():void {
+		pausePosition = soundChannel.position; 
+		soundChannel.stop();
+	}
+
+	public function resumePlaying(doneFunction:Function = null):void {
+		var flashSnd:Sound = new Sound();
+		flashSnd.addEventListener(SampleDataEvent.SAMPLE_DATA, writeSampleData);
+		
+		soundChannel = flashSnd.play(pausePosition);
 		if (soundChannel) {
 			if (doneFunction != null) soundChannel.addEventListener(Event.SOUND_COMPLETE, doneFunction);
 		} else {

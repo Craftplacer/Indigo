@@ -95,5 +95,15 @@ public class Color {
 		var v:Number = 0.6 + (0.4 * Math.random());
 		return fromHSV(h, s, v);
 	}
+	//Added by Craftplacer
+	public static function getReadableColor(rgb:int):int {
+		var r:Number = ((rgb >> 16) & 255) / 255;
+		var g:Number = ((rgb >> 8) & 255) / 255;
+		var b:Number = (rgb & 255) / 255;
 
+		return Math.sqrt(
+    	r * r * .241 +
+    	g * g * .691 +
+    	b * b * .068);
+	}
 }}

@@ -387,7 +387,7 @@ public class ImagesPart extends UIPart {
 		if (!c && costumeOrList is Array)
 			c = costumeOrList[0] as ScratchCostume;
 
-		var p:Point = new Point(240, 180);
+		var p:Point = new Point(ScratchObj.STAGEW / 2, ScratchObj.STAGEH / 2);
 		editor.addCostume(c, p);
 	}
 
@@ -501,10 +501,10 @@ public class ImagesPart extends UIPart {
 		var obj:ScratchObj = app.viewedObj();
 		if (obj == null) return;
 		if (obj.isStage) { // resize photo to stage
-			var scale:Number = 480 / photo.width;
+			var scale:Number = ScratchObj.STAGEW / photo.width;
 			var m:Matrix = new Matrix();
 			m.scale(scale, scale);
-			var scaledPhoto:BitmapData = new BitmapData(480, 360, true, 0);
+			var scaledPhoto:BitmapData = new BitmapData(ScratchObj.STAGEW, ScratchObj.STAGEH, true, 0);
 			scaledPhoto.draw(photo, m);
 			photo = scaledPhoto;
 		}

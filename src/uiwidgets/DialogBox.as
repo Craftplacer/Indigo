@@ -25,6 +25,7 @@ package uiwidgets {
 	import flash.utils.Dictionary;
 	import translation.Translator;
 	import ui.parts.UIPart;
+	import scratch.ScratchObj;
 
 public class DialogBox extends Sprite {
 
@@ -87,7 +88,7 @@ public class DialogBox extends Sprite {
 		if (context) d.updateContext(context);
 		d.showOnStage(stage ? stage : Scratch.app.stage);
 	}
-	
+
 	public static function close(title:String, msg:String = null, widget:DisplayObject = null, button:String = "OK", stage:Stage = null, okFunction:Function = null, cancelFunction:Function = null, context:Dictionary = null,inverted:Boolean = false):void {
 		var d:DialogBox = new DialogBox(okFunction, cancelFunction);
 		d.leftJustify = false;
@@ -178,7 +179,7 @@ public class DialogBox extends Sprite {
 		g.drawRoundRect(0, 0, 17, 17, 3, 3);
 		g.endFill();
 		if (b) {
-			g.lineStyle(2, 0x4c4d4f, 1, true);
+			g.lineStyle(2, CSS.indigo, 1, true);
 			g.moveTo(3,7);
 			g.lineTo(5,7);
 			g.lineTo(8,13);
@@ -202,7 +203,7 @@ public class DialogBox extends Sprite {
 		addChild(b);
 		buttons.push(b);
 	}
-	
+
 	public function addInvertedButton(label:String, action:Function):void {
 		function doAction():void {
 			remove();
@@ -216,14 +217,14 @@ public class DialogBox extends Sprite {
 	public function showOnStage(stage:Stage, center:Boolean = true, padding:Number = 0):void {
 		fixLayout(padding);
 		if (center) {
-			x = (stage.stageWidth - width) / 2;
-			y = (stage.stageHeight - height) / 2;
+			x = (ScratchObj.STAGEW - width) / 2;
+			y = (ScratchObj.STAGEH - height) / 2;
 		} else {
 			x = stage.mouseX + 10;
 			y = stage.mouseY + 10;
 		}
-		x = Math.max(0, Math.min(x, stage.stageWidth - width));
-		y = Math.max(0, Math.min(y, stage.stageHeight - height));
+		x = Math.max(0, Math.min(x, stage.width - width));
+		y = Math.max(0, Math.min(y, stage.height - height));
 		stage.addChild(this);
 		if (labelsAndFields.length > 0) {
 			// note: doesn't work when testing from FlexBuilder; works when deployed
@@ -277,7 +278,7 @@ public class DialogBox extends Sprite {
 	}
 
 	private function makeLabel(s:String, forTitle:Boolean = false):TextField {
-		const normalFormat:TextFormat = new TextFormat(CSS.font, 14, CSS.textColor);
+		const normalFormat:TextFormat = new TextFormat(CSS.font, 14, 0xFFFFFF);
 		var result:VariableTextField = new VariableTextField();
 		result.autoSize = TextFieldAutoSize.LEFT;
 		result.selectable = false;
@@ -427,7 +428,7 @@ public class DialogBox extends Sprite {
 		g.clear();
 		UIPart.drawTopBar(g, titleBarColors, UIPart.getTopBarPath(w, h), w, CSS.titleBarH, borderColor);
 		g.lineStyle(0.5, borderColor, 1, true);
-		g.beginFill(0xFFFFFF);
+		g.beginFill(CSS.backgroundColor_default);
 		g.drawRect(0, CSS.titleBarH, w - 1, h - CSS.titleBarH - 1);
 	}
 

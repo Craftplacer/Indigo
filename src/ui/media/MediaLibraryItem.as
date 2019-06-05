@@ -108,7 +108,7 @@ public class MediaLibraryItem extends Sprite {
 
 	// all paths must call done() even on failure!
 	private function setImageThumbnail(md5:String, done:Function, spriteMD5:String = null):void {
-		var forStage:Boolean = (dbObj.width == 480); // if width is 480, format thumbnail for stage
+		var forStage:Boolean = (dbObj.width == ScratchObj.STAGEW); // if width is 480, format thumbnail for stage
 		var importer:SVGImporter;
 		function gotSVGData(data:ByteArray):void {
 			if (data) {

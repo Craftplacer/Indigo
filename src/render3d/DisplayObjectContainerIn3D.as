@@ -23,7 +23,7 @@ package render3d {
  *   A display object container which renders in 3D instead
  *   @author Shane M. Clements, shane.m.clements@gmail.com
  */
-
+import scratch.ScratchObj;
 import flash.display.Sprite;
 
 public class DisplayObjectContainerIn3D extends Sprite {
@@ -279,12 +279,12 @@ SCRATCH::allow3d{
 		var p:Point = scratchStage.localToGlobal(originPt);
 		stage3D.x = p.x;
 		stage3D.y = p.y;
-		var width:uint = Math.ceil(480 * appScale);
-		var height:uint = Math.ceil(360 * appScale);
+		var width:uint = Math.ceil(ScratchObj.STAGEW * appScale);
+		var height:uint = Math.ceil(ScratchObj.STAGEH * appScale);
 		var rect:Rectangle = new Rectangle(0, 0, width, height);
 		if (stage3D.context3D && (!scissorRect || !scissorRect.equals(rect))) {
 			scissorRect = rect;
-			projMatrix = createOrthographicProjectionMatrix(480, 360, 0, 0);
+			projMatrix = createOrthographicProjectionMatrix(ScratchObj.STAGEW, ScratchObj.STAGEH, 0, 0);
 			stage3D.context3D.setScissorRectangle(scissorRect);
 			stage3D.context3D.configureBackBuffer(width, height, 0, false, true);
 //trace('Setting backbuffer and scissor rectangle');

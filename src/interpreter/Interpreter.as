@@ -70,6 +70,10 @@ import scratch.*;
 
 import sound.*;
 
+import watchers.ListWatcher;
+
+import uiwidgets.*;
+
 public class Interpreter {
 
 	public var activeThread:Thread;				// current thread
@@ -225,7 +229,7 @@ public class Interpreter {
 		doRedraw = false;
 		currentMSecs = getTimer();
 		if (threads.length == 0) return;
-		while ((currentMSecs - startTime) < workTime) {
+		//while ((currentMSecs - startTime) < workTime) {
 			if (warpThread && (warpThread.block == null)) clearWarpBlock();
 			var threadStopped:Boolean = false;
 			var runnableCount:int = 0;
@@ -249,7 +253,7 @@ public class Interpreter {
 			}
 			currentMSecs = getTimer();
 			if (doRedraw || (runnableCount == 0)) return;
-		}
+		//}
 	}
 
 	private function stepActiveThread():void {
@@ -474,7 +478,8 @@ public class Interpreter {
 		primTable["whenSensorConnected"]	= primNoop;
 		primTable["whenSensorGreaterThan"]	= primNoop;
 		primTable["whenTiltIs"]				= primNoop;
-
+		// other stuff
+		primTable["whenCondition"]	= primNoop;
 		addOtherPrims(primTable);
 	}
 
@@ -505,16 +510,29 @@ public class Interpreter {
 		var loopVar:Variable;
 
 		if (activeThread.firstTime) {
-			if (!(arg(b, 0) is String)) return;
+			//if (!(arg(b, 0) is String)) return;
 			var listArg:* = arg(b, 1);
+			// it turns out that if the arg is a list, that it returns a string
+			// instead of a listwatcher.
+			//if (listArg is ListWatcher) {
+			//	list = listArg.contents as Array;
+			//}
 			if (listArg is Array) {
 				list = listArg as Array;
 			}
-			if (listArg is String) {
-				var n:Number = Number(listArg);
-				if (!isNaN(n)) listArg = n;
+			else if (listArg is String) {
+				var string = (listArg as String);
+				//ActionScript doesn't has String.contains TFW? -Craftplacer
+				if(string.indexOf("\t") >= 0)
+				{
+					list = string.split('\t');
+				}
+				else {
+					list = string.split("");
+				}
+
 			}
-			if ((listArg is Number) && !isNaN(listArg)) {
+			else if ((listArg is Number) && !isNaN(listArg)) {
 				var last:int = int(listArg);
 				if (last >= 1) {
 					list = new Array(last - 1);

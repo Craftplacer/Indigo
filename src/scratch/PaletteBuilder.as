@@ -76,9 +76,10 @@ public class PaletteBuilder {
 			if (stageSpecific.indexOf(catName) != -1) selectedCategory += 100;
 			if (catName == 'Motion') {
 				addItem(makeLabel(Translator.map('Stage selected:')));
-				nextY -= 6;
-				addItem(makeLabel(Translator.map('No motion blocks')));
-				return;
+				// this is a lie.
+				//nextY -= 6;
+				//addItem(makeLabel(Translator.map('No motion blocks')));
+				//return;
 			}
 		}
 		addBlocksForCategory(selectedCategory, catColor);

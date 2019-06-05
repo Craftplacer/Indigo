@@ -250,8 +250,8 @@ public class GestureHandler {
 		if ((gesture == "drag") && (carriedObj is ScratchSprite)) {
 			var stageP:Point = app.stagePane.globalToLocal(carriedObj.localToGlobal(new Point(0, 0)));
 			var spr:ScratchSprite = ScratchSprite(carriedObj);
-			spr.scratchX = stageP.x - 240;
-			spr.scratchY = 180 - stageP.y;
+			spr.scratchX = stageP.x - ScratchObj.STAGEW / 2;
+			spr.scratchY = ScratchObj.STAGEH / 2 - stageP.y;
 			spr.updateBubble();
 		}
 		var oldTarget:ScrollFrame = scrollTarget;
@@ -619,14 +619,14 @@ public class GestureHandler {
 		bubbleStartY = stage.mouseY;
 		var bx:Number = x + width;
 		var by:Number = y - bubble.height;
-		if (bx + bubble.width > stage.stageWidth - bubbleMargin && x - bubble.width > bubbleMargin) {
+		if (bx + bubble.width > stage.width - bubbleMargin && x - bubble.width > bubbleMargin) {
 			bx = x - bubble.width;
 			bubble.setDirection('right');
 		} else {
 			bubble.setDirection('left');
 		}
-		bubble.x = Math.max(bubbleMargin, Math.min(stage.stageWidth - bubbleMargin, bx));
-		bubble.y = Math.max(bubbleMargin, Math.min(stage.stageHeight - bubbleMargin, by));
+		bubble.x = Math.max(bubbleMargin, Math.min(stage.width - bubbleMargin, bx));
+		bubble.y = Math.max(bubbleMargin, Math.min(stage.height - bubbleMargin, by));
 
 		var f:DropShadowFilter = new DropShadowFilter();
 		f.distance = 4;

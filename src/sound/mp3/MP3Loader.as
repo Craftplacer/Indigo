@@ -76,6 +76,7 @@ public class MP3Loader {
 		}
 		function compressSamples():void {
 			var snd:ScratchSound = new ScratchSound(sndName, null);
+			// Disable Compressing
 			snd.setSamples(extractedSamples, 22050, true);
 			whenDone(snd);
 		}

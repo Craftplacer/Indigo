@@ -28,6 +28,7 @@ package watchers {
 	import translation.Translator;
 	import util.JSON;
 	import uiwidgets.*;
+	import scratch.ScratchObj;
 
 public class ListWatcher extends Sprite {
 
@@ -129,7 +130,7 @@ public class ListWatcher extends Sprite {
 		return m;
 	}
 
-	private function importList():void {
+	public function importList():void {
 		// Prompt user for a file name and import that file.
 		// Each line of the file becomes a list item.
 		function fileLoaded(event:Event):void {
@@ -156,12 +157,12 @@ public class ListWatcher extends Sprite {
 	// Visual feedback for list changes
 	//------------------------------
 
-	private function removeTrailingEmptyLines(lines:Array):Array {
+	public static function removeTrailingEmptyLines(lines:Array):Array {
 		while (lines.length && !lines[lines.length - 1]) lines.pop();
 		return lines;
 	}
 
-	private function importLines(lines:Array):void {
+	public function importLines(lines:Array):void {
 		function gotColumn(s:String):void {
 			var n:Number = parseInt(s);
 			if (isNaN(n) || (n < 1) || (n > columnCount)) contents = lines;
@@ -361,7 +362,7 @@ public class ListWatcher extends Sprite {
 	public function setWidthHeight(w:int, h:int):void {
 		// Large (especially tall) list watchers can cause many, many list cells to be allocated, leading to delays.
 		// Bound the size so that updateContents() won't cause long delays for long lists.
-		var boundingObject:Object = this.parent || Scratch.app.stagePane || {width: 480, height: 360};
+		var boundingObject:Object = this.parent || Scratch.app.stagePane || {width: ScratchObj.STAGEW, height: ScratchObj.STAGEH};
 		x = Math.max(0, Math.min(x, boundingObject.width - frame.minWidth));
 		y = Math.max(0, Math.min(y, boundingObject.height - frame.minHeight));
 		w = Math.max(frame.minWidth, Math.min(w, boundingObject.width - x));

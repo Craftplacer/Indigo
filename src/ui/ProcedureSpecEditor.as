@@ -51,7 +51,7 @@ public class ProcedureSpecEditor extends Sprite {
 	public function ProcedureSpecEditor(originalSpec:String, inputNames:Array, warpFlag:Boolean) {
 		addChild(base = new Shape());
 		setWidthHeight(350, 10);
-
+		//TODO: Change block shape
 		blockShape = new BlockShape(BlockShape.CmdShape, Specs.procedureColor);
 		blockShape.setWidthAndTopHeight(100, 25, true);
 		addChild(blockShape);
@@ -91,7 +91,7 @@ public class ProcedureSpecEditor extends Sprite {
 	private function setWidthHeight(w:int, h:int):void {
 		var g:Graphics = base.graphics;
 		g.clear();
-		g.beginFill(CSS.white);
+		g.beginFill(CSS.panelColor);
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 	}

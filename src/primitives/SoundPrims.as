@@ -42,7 +42,12 @@ public class SoundPrims {
 	public function addPrimsTo(primTable:Dictionary):void {
 		primTable["playSound:"]			= primPlaySound;
 		primTable["doPlaySoundAndWait"]	= primPlaySoundUntilDone;
+		primTable["resumeSound"]		= function(b:*):* { var snd:ScratchSound = interp.targetObj().findSound(interp.arg(b, 0)); ScratchSoundPlayer.resumeSound(snd.soundName) };
+		primTable["pauseSound"]			= function(b:*):* { var snd:ScratchSound = interp.targetObj().findSound(interp.arg(b, 0)); ScratchSoundPlayer.pauseSound(snd.soundName) };
+		primTable["stopSound"]			= function(b:*):* { var snd:ScratchSound = interp.targetObj().findSound(interp.arg(b, 0)); ScratchSoundPlayer.stopSound(snd.soundName) };
 		primTable["stopAllSounds"]		= function(b:*):* { ScratchSoundPlayer.stopAllSounds() };
+
+		primTable["pausePosition"] 		= function(b:*):* {  var snd:ScratchSound = interp.targetObj().findSound(interp.arg(b, 0)); return ScratchSoundPlayer.getPausePosition(snd.soundName)};
 
 		primTable["drum:duration:elapsed:from:"]	= primPlayDrum; // Scratch 1.4 drum numbers
 		primTable["playDrum"]						= primPlayDrum;
@@ -89,6 +94,11 @@ public class SoundPrims {
 		}
 	}
 
+	private function primStopSound(b:Block):void {
+		var snd:ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
+		if (snd != null) stopSound(snd, interp.targetObj());
+	}
+
 	private function primPlayNote(b:Block):void {
 		var s:ScratchObj = interp.targetObj();
 		if (s == null) return;
@@ -120,6 +130,13 @@ public class SoundPrims {
 		var player:ScratchSoundPlayer = s.sndplayer();
 		player.client = client;
 		player.startPlaying();
+		return player;
+	}
+
+	private function stopSound(s:ScratchSound, client:ScratchObj):ScratchSoundPlayer {
+		var player:ScratchSoundPlayer = s.sndplayer();
+		player.client = client;
+		player.stopPlaying();
 		return player;
 	}
 

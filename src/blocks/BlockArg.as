@@ -68,10 +68,11 @@ public class BlockArg extends Sprite {
 	//	m - string with menu (rectangular w/ menu icon)
 	//	n - number (rounded)
 	//	s - string (rectangular)
+	//  x - special (rectangular)
 	//	none of the above - custom subclass of BlockArg
 	public function BlockArg(type:String, color:int, editable:Boolean = false, menuName:String = '') {
 		this.type = type;
-
+		//editable = true;
 		if (color == -1) { // copy for clone; omit graphics
 			if ((type == 'd') || (type == 'n')) numberType = NT_FLOAT;
 			return;
@@ -80,6 +81,7 @@ public class BlockArg extends Sprite {
 		if (type == 'b') {
 			base = new BlockShape(BlockShape.BooleanShape, c);
 			argValue = false;
+			//editable = false;
 		} else if (type == 'c') {
 			base = new BlockShape(BlockShape.RectShape, c);
 			this.menuName = 'colorPicker';
@@ -99,6 +101,9 @@ public class BlockArg extends Sprite {
 			argValue = 0;
 		} else if (type == 's') {
 			base = new BlockShape(BlockShape.RectShape, c);
+		} else if (type == 'x') {
+			base = new BlockShape(BlockShape.RectShape, c);
+			//editable = false;
 		} else {
 			// custom type; subclass is responsible for adding
 			// the desired children, setting width and height,
@@ -112,7 +117,7 @@ public class BlockArg extends Sprite {
 		} else {
 			base.setWidthAndTopHeight(30, Block.argTextFormat.size + 6); // 15 for normal arg font
 		}
-		base.filters = blockArgFilters();
+		//base.filters = blockArgFilters();
 		addChild(base);
 
 		if ((type == 'd') || (type == 'm')) { // add a menu icon
@@ -129,7 +134,7 @@ public class BlockArg extends Sprite {
 
 		if (editable || numberType || (type == 'm')) { // add a string field
 			field = makeTextField();
-			if ((type == 'm') && !editable) field.textColor = 0xFFFFFF;
+			if ((type == 'm') && !editable) field.textColor = 0xFF0000;
 			else base.setWidthAndTopHeight(30, Block.argTextFormat.size + 5); // 14 for normal arg font
 			field.text = numberType ? '10' : '';
 			if (numberType) field.restrict = '0-9e.\\-'; // restrict to numeric characters

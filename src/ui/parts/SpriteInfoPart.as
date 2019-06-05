@@ -91,7 +91,7 @@ public class SpriteInfoPart extends UIPart implements DragClient {
 		this.h = h;
 		var g:Graphics = shape.graphics;
 		g.clear();
-		g.beginFill(CSS.white);
+		g.beginFill(CSS.panelColor);
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 	}

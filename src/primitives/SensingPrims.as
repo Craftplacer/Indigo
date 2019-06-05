@@ -57,6 +57,7 @@ public class SensingPrims {
 		primTable['keyPressed:']		= primKeyPressed;
 		primTable['distanceTo:']		= primDistanceTo;
 		primTable['getAttribute:of:']	= primGetAttribute;
+		primTable['setAttribute:of:to:'] = primSetAttribute;
 		primTable['soundLevel']			= function(b:*):* { return app.runtime.soundLevel() };
 		primTable['isLoud']				= function(b:*):* { return app.runtime.isLoud() };
 		primTable['timestamp']			= primTimestamp;
@@ -75,7 +76,7 @@ public class SensingPrims {
 	}
 
 	// TODO: move to stage
-	static private var stageRect:Rectangle = new Rectangle(0, 0, 480, 360);
+	static private var stageRect:Rectangle = new Rectangle(0, 0, ScratchObj.STAGEW, ScratchObj.STAGEH);
 	private function primTouching(b:Block):Boolean {
 		var s:ScratchSprite = interp.targetSprite();
 		if (s == null) return false;
@@ -263,6 +264,31 @@ public class SensingPrims {
 		}
 		if (obj.ownsVar(attribute)) return obj.lookupVar(attribute).value; // variable
 		return 0;
+	}
+
+	private function primSetAttribute(b:Block):void {
+		var attribute:String = interp.arg(b, 0);
+		var obj:ScratchObj = app.stagePane.objNamed(String(interp.arg(b, 1)));
+		var value:* = interp.arg(b,2);
+		if (obj is ScratchObj)
+		{
+			if (obj is ScratchSprite) {
+				var s:ScratchSprite = ScratchSprite(obj);
+				if ('x position' == attribute) s.setScratchXY(value, s.scratchY);
+				if ('y position' == attribute) s.setScratchXY(s.scratchX, value);
+				if ('direction' == attribute) s.setDirection(value);
+				if ('costume #' == attribute) s.showCostume(value - 1);
+				if ('costume name' == attribute) s.showCostumeNamed(value);
+				if ('size' == attribute) s.setSize(value);
+				if ('volume' == attribute) s.setVolume(value);
+			} else if (obj is ScratchStage) {
+				if ('background #' == attribute)  obj.showCostume(value - 1); // support for old 1.4 blocks
+				if ('backdrop #' == attribute) obj.showCostume(value - 1);
+				if ('backdrop name' == attribute) obj.showCostumeNamed(value);
+				if ('volume' == attribute) obj.setVolume(value);
+			}
+			else return obj.setVarTo(attribute, value); // variable
+		}
 	}
 
 	private function mouseOrSpritePosition(arg:String):Point {

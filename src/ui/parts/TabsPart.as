@@ -92,20 +92,24 @@ public class TabsPart extends UIPart {
 	private function makeTabImg(label:String, isSelected:Boolean):Sprite {
 		var img:Sprite = new Sprite();
 		var tf:TextField = new TextField();
-		tf.defaultTextFormat = new TextFormat(CSS.font, 12, isSelected ? CSS.onColor : CSS.offColor, false);
+		tf.defaultTextFormat = new TextFormat(CSS.font, 12, 0xFFFFFF, false);
 		tf.text = Translator.map(label);
 		tf.width = tf.textWidth + 5;
 		tf.height = tf.textHeight + 5;
 		tf.x = 10;
-		tf.y = 4;
+		tf.y = 3;
 		img.addChild(tf);
 
 		var g:Graphics = img.graphics;
 		var w:int = tf.width + 20;
 		var h:int = 28;
 		var r:int = 9;
-		if (isSelected) drawTopBar(g, CSS.titleBarColors, getTopBarPath(w, h), w, h);
-		else drawSelected(g, [0xf2f2f2, 0xd1d2d3], getTopBarPath(w, h), w, h);
+		if (isSelected)
+		{
+			g.beginFill(0xFFFFFF);
+			g.drawRect(0, h - 3,w,3);
+			g.endFill();
+		}
 		return img;
 	}
 

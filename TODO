@@ -1,0 +1,32 @@
+
+Todo:
+  ☐ Toolbox search bar
+  ☐ More Sound Blocks
+    ✔ Pause
+    ✔ Resume
+    ✔ Stop single sound
+    ✔ Pause Position
+    ☐ Current Position
+    ☐ Length of a sound
+    ☐ State of a sound
+  
+  ☐ File managing and up/downloading
+    ☐ Upload File
+      ☐ To List
+        ☐ Text
+        ☐ Byte
+    ☐ Download File
+  
+  ☐ String blocks
+    ☐ Remove character at (index) from (input)
+    ☐ Remove (length) characters at (index) from (input)
+    ☐ Join multiple strings
+
+  ☐ Web Clients?
+  ☐ Non Limited Block slots
+  ☐ https://scratch.mit.edu/discuss/topic/293106/?page=1#post-3005071
+    ☐ received [Message1 v]
+    ☐
+
+    
+  Take a look at:  ProcedureSpecEditor.as:L176

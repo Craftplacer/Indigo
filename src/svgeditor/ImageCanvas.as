@@ -25,7 +25,7 @@ import flash.events.*;
 import flash.geom.*;
 
 import svgeditor.objs.SVGShape;
-
+import scratch.ScratchObj;
 import uiwidgets.*;
 
 public class ImageCanvas extends Sprite {
@@ -37,8 +37,8 @@ public class ImageCanvas extends Sprite {
 	private var segmentationLayer:Bitmap;
 	private var visibleMask:Shape;
 
-	static public const canvasWidth:uint = 480;
-	static public const canvasHeight:uint = 360;
+	static public const canvasWidth:uint = ScratchObj.STAGEW;
+	static public const canvasHeight:uint = ScratchObj.STAGEH;
 	static private const canvasBorderWidth:uint = 25;
 	static private const scrollbarThickness:int = 9;
 	static private const maxZoom:Number = 16;
@@ -145,7 +145,7 @@ public class ImageCanvas extends Sprite {
 
 		if (editor is BitmapEdit) {
 			// Bitmap editor works at double resolution.
-			var bm:BitmapData = new BitmapData(960, 720, true, 0);
+			var bm:BitmapData = new BitmapData(ScratchObj.STAGEW * 2, ScratchObj.STAGEH * 2, true, 0);
 			visibleArea.addChild(bitmapLayer = new Bitmap(bm));
 			bitmapLayer.scaleX = bitmapLayer.scaleY = 0.5;
 			visibleArea.addChild(segmentationLayer = new Bitmap(bm.clone()));
